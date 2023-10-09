@@ -53,9 +53,9 @@ int main(int argc, char *argv[])
     }
     
     typhp::Parser parser(tokens);
-    typhp::ast::Node *root = parser.parse();
+    typhp::ASTNode *global_scope = parser.parse();
 
-    typhp::Generator generator(root);
+    typhp::Generator generator(global_scope);
 
     std::cout << "This is the generated php source code:\n"
               << generator.generate() << "\n";

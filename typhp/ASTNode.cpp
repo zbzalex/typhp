@@ -1,22 +1,20 @@
-#include "Node.h"
+#include "ASTNode.h"
 #include <algorithm>
 
 namespace typhp {
-namespace ast {
 
-Node::Node() {}
+ASTNode::ASTNode() {}
 
-void Node::add(Node *child) {
+void ASTNode::add(ASTNode *child) {
     children_.push_back(child);
     child->set_parent(this);
 }
 
-void Node::remove(Node *child) {
+void ASTNode::remove(ASTNode *child) {
     const auto it = std::find(children_.begin(), children_.end(), child);
     if (it != children_.end()) {
         children_.erase(it);
     }
 }
 
-} // namespace ast
 } // namespace typhp

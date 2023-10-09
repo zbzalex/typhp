@@ -3,7 +3,7 @@
 
 #include "Lexer.h"
 #include <vector>
-#include "ast/Node.h"
+#include "ASTNode.h"
 
 namespace typhp {
 
@@ -12,7 +12,7 @@ class Parser {
         std::vector<Token> tokens_;
     public:
         Parser(std::vector<Token> tokens): tokens_(tokens) {}
-        typhp::ast::Node* parse();
+        typhp::ASTNode* parse();
 };
 
 } // namespace typhp

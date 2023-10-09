@@ -1,12 +1,12 @@
 #include "Parser.h"
-#include "ast/Node.h"
+#include "ASTNode.h"
 #include "Lexer.h"
 #include <iostream>
 
 namespace typhp {
-typhp::ast::Node * Parser::parse() {
+typhp::ASTNode * Parser::parse() {
 
-    typhp::ast::Node * global_scope = new typhp::ast::Node();
+    typhp::ASTNode * global_scope = new typhp::ASTNode();
 
     for ( int i = 0 ; i < tokens_.size(); i++ ) {
 
@@ -17,7 +17,7 @@ typhp::ast::Node * Parser::parse() {
             && tokens_.at(i + 1).type == TokenType_ID
             ) {
             
-            const auto function_scope = new typhp::ast::Node();
+            const auto function_scope = new typhp::ASTNode();
 
             global_scope->add(function_scope);
         }
