@@ -1,7 +1,7 @@
 #include "Generator.h"
 
 namespace typhp {
-    void Generator::generate() {
+    std::string Generator::generate() {
         
     }
 }

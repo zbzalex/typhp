@@ -2,6 +2,7 @@
 #define TYPHP_GENERATOR_H
 
 #include "ast/Node.h"
+#include <string>
 
 namespace typhp {
 class Generator {
@@ -9,7 +10,7 @@ class Generator {
         typhp::ast::Node *root_;
     public:
         Generator(typhp::ast::Node *root): root_(root) {}
-        void generate();
+        std::string generate();
 };
 }
 
