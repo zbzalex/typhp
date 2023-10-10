@@ -1,8 +1,10 @@
 #ifndef TYPHP_ANALYZER
 #define TYPHP_ANALYZER
 
-namespace typhp {
-    class Analyzer {
+namespace typhp
+{
+    class Analyzer
+    {
     public:
         Analyzer();
     };
