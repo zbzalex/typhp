@@ -99,14 +99,14 @@ namespace typhp
                 && next->type == TokenType_SPACE
                 && nextnext != nullptr
                 && nextnext->type == TokenType_ID) {
-                parse_function_decl();
+                parse_function_decl(global_scope);
             } else if ((current->type == TokenType_CLASS
                 || current->type == TokenType_INTERFACE)
                 && next != nullptr
                 && next->type == TokenType_SPACE
                 && nextnext != nullptr
                 && nextnext->type == TokenType_ID) {
-                parse_class_decl();
+                parse_class_decl(global_scope);
             } else if ((current->type == TokenType_INCLUDE
                 || current->type == TokenType_INCLUDE_ONCE
                 || current->type == TokenType_REQUIRE
@@ -129,6 +129,9 @@ namespace typhp
         ASTNode *scope
     ) {
 
+        VarDecl *varDecl = new VarDecl();
+
+
         std::cout << "var decl\n";
 
         Token *type = current();
@@ -136,17 +139,27 @@ namespace typhp
         next(); // $
         Token *name = next();
 
+        varDecl->add(new Literal(type->value));
+        varDecl->add(new Literal(name->value));
+
+
         std::cout << type->value << "\n";
         std::cout << name->value << "\n";
                 
         if (look_ahead(1)->type == TokenType_SEMI) {
             next();
         } else if (look_ahead(1)->type == TokenType_EQ) {
-            //
+            AssignExpr *assignExpr = new AssignExpr();
+
+            varDecl->add(assignExpr);
         }
+
+        scope->add(varDecl);
     }
 
-    void Parser::parse_function_decl() {
+    void Parser::parse_function_decl(
+        ASTNode *scope
+    ) {
         std::cout << "function decl\n";
         
         next(); // skip space
@@ -167,7 +180,9 @@ namespace typhp
 
     }
 
-    void Parser::parse_class_decl() {
+    void Parser::parse_class_decl(
+        ASTNode *scope
+    ) {
         Token *class_ = look_ahead(0);
 
         std::cout <<

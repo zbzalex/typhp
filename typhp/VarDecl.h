@@ -2,6 +2,7 @@
 #define TYPHP_VARDECL_H
 
 #include "ASTNode.h"
+#include <string>
 
 namespace typhp
 {
