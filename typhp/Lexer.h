@@ -28,10 +28,10 @@ namespace typhp
         TokenType_IF,
         TokenType_ELSE,
         TokenType_ELSEIF,
-        TokenType_VAR,
         TokenType_RETURN,
         TokenType_SEMI,
         TokenType_CLASS,
+        TokenType_INTERFACE,
         TokenType_PUBLIC,
         TokenType_PROTECTED,
         TokenType_PRIVATE,
@@ -42,26 +42,29 @@ namespace typhp
         TokenType_STATIC,
         TokenType_ARRAY,
         TokenType_MIXED,
-
+        TokenType_BOOL,
+        TokenType_FLOAT,
+        TokenType_DOUBLE,
         TokenType_LT,
         TokenType_GT,
         TokenType_EQ,
         TokenType_MINUS,
         TokenType_PLUS,
         TokenType_TIMES,
-        TokenType_DOT,
+        TokenType_PERIOD,
         TokenType_SLASH,
         TokenType_BACKSLASH,
         TokenType_SINGLE_QUOTE,
         TokenType_DOUBLE_QUOTE,
-        TokenType_NOT, // !        
-        TokenType_NONNULL, // ?
-
-        
+        TokenType_NOT,   
+        TokenType_NONNULL,
+        TokenType_COLON,
         TokenType_PHP_START_TAG,
         TokenType_PHP_CLOSE_TAG,
         TokenType_HTML_TEXT,
-
+        TokenType_SPACE,
+        TokenType_NEWLINE,
+        TokenType_DOLLAR,
         TokenType_UNKN,
         TokenType_EOF,
     };
@@ -81,7 +84,7 @@ namespace typhp
         SourceLocation location;
     };
 
-    constexpr char *delims = "@()=,[]{};:<>\\.-!?";
+    constexpr char *delims = "@()=,[]{};:<>\\.-!?/$";
     constexpr char *blanks = "\x20\n\r\t";
     constexpr char *alnums = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ01234567890";
     constexpr char *alphas = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ";
@@ -97,16 +100,17 @@ namespace typhp
         char *input_;
         int input_len_;
 
-        std::vector<Token> tokens_;
+        std::vector<Token *> tokens_;
         
     public:
         Lexer(char *input, int len) : input_(input), input_len_(len) {}
 
-        std::vector<Token> tokenize();
+        std::vector<Token *> tokenize();
 
     private:
         void push_token(int start, int len, int line);
         void push_html_text(int start, int len);
+        void trim_spaces();
     };
 
 } // namespace typhp

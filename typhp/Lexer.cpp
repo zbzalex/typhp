@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <ctype.h>
+#include <algorithm>
 
 namespace typhp
 {
@@ -53,7 +54,7 @@ namespace typhp
         return false;
     }
 
-    std::vector<Token> Lexer::tokenize()
+    std::vector<Token *> Lexer::tokenize()
     {
 
         int len = 0;
@@ -95,9 +96,7 @@ namespace typhp
             }
 
             // detect php start tag
-            if (!inside_php_tag
-                && *(input_ + cursor) == '<'
-                && *(input_ + cursor + 1) == '?')
+            if (!inside_php_tag && *(input_ + cursor) == '<' && *(input_ + cursor + 1) == '?')
             {
                 if (len > 0)
                 {
@@ -113,9 +112,7 @@ namespace typhp
                 cursor += 2;
 
                 // skip php tag
-                if (   *(input_ + cursor    ) == 'p'
-                    && *(input_ + cursor + 1) == 'h'
-                    && *(input_ + cursor + 2) == 'p')
+                if (*(input_ + cursor) == 'p' && *(input_ + cursor + 1) == 'h' && *(input_ + cursor + 2) == 'p')
                 {
                     cursor += 3;
                 }
@@ -128,8 +125,7 @@ namespace typhp
             if (inside_php_tag)
             {
                 // detect php close tag
-                if (   *(input_ + cursor    ) == '?'
-                    && *(input_ + cursor + 1) == '>')
+                if (*(input_ + cursor) == '?' && *(input_ + cursor + 1) == '>')
                 {
                     inside_php_tag = false;
 
@@ -168,6 +164,8 @@ namespace typhp
             push_token(start, len, line);
         }
 
+        trim_spaces();
+
         return tokens_;
     }
 
@@ -177,191 +175,211 @@ namespace typhp
         value[len] = '\0';
         memcpy(value, input_ + start, len);
 
-        Token token;
-        token.value = value;
+        Token *token = new Token();
+        token->value = value;
 
-        token.len = len;
-        token.location = SourceLocation{
+        token->len = len;
+        token->location = SourceLocation{
             .start = start,
             .end = start + len,
             .line = line,
         };
 
-        if (strcmp(value, "<?") == 0) {
-            token.type = TokenType_PHP_START_TAG;
-        } else if (strcmp(value, "?>") == 0) {
-            token.type = TokenType_PHP_CLOSE_TAG;
-        } else if (strcmp(value, "require") == 0)
+        if (*value == '\x20')
         {
-            token.type = TokenType_REQUIRE;
+            token->type = TokenType_SPACE;
+        }
+        else if (*value == '\n')
+        {
+            token->type = TokenType_NEWLINE;
+        }
+        else if (strcmp(value, "<?") == 0)
+        {
+            token->type = TokenType_PHP_START_TAG;
+        }
+        else if (strcmp(value, "?>") == 0)
+        {
+            token->type = TokenType_PHP_CLOSE_TAG;
+        }
+        else if (strcmp(value, "require") == 0)
+        {
+            token->type = TokenType_REQUIRE;
         }
         else if (strcmp(value, "require_once") == 0)
         {
-            token.type = TokenType_REQUIRE_ONCE;
+            token->type = TokenType_REQUIRE_ONCE;
         }
         else if (strcmp(value, "include") == 0)
         {
-            token.type = TokenType_INCLUDE;
+            token->type = TokenType_INCLUDE;
         }
         else if (strcmp(value, "include_once") == 0)
         {
-            token.type = TokenType_INCLUDE_ONCE;
+            token->type = TokenType_INCLUDE_ONCE;
         }
         else if (strcmp(value, "function") == 0)
         {
-            token.type = TokenType_FUNCTION;
+            token->type = TokenType_FUNCTION;
         }
         else if (*value == '(')
         {
-            token.type = TokenType_LPAREN;
+            token->type = TokenType_LPAREN;
         }
         else if (*value == ')')
         {
-            token.type = TokenType_RPAREN;
+            token->type = TokenType_RPAREN;
         }
         else if (*value == '[')
         {
-            token.type = TokenType_LBRACK;
+            token->type = TokenType_LBRACK;
         }
         else if (*value == ']')
         {
-            token.type = TokenType_RBRACK;
+            token->type = TokenType_RBRACK;
         }
         else if (*value == '{')
         {
-            token.type = TokenType_LBRACE;
+            token->type = TokenType_LBRACE;
         }
         else if (*value == '}')
         {
-            token.type = TokenType_RBRACE;
+            token->type = TokenType_RBRACE;
         }
         else if (*value == '"')
         {
-            token.type = TokenType_CONST_STRING;
+            token->type = TokenType_CONST_STRING;
         }
         else if (strcmp(value, "int") == 0)
         {
-            token.type = TokenType_INT;
+            token->type = TokenType_INT;
         }
         else if (strcmp(value, "string") == 0)
         {
-            token.type = TokenType_STRING;
+            token->type = TokenType_STRING;
         }
         else if (strcmp(value, "if") == 0)
         {
-            token.type = TokenType_IF;
+            token->type = TokenType_IF;
         }
         else if (strcmp(value, "else") == 0)
         {
-            token.type = TokenType_ELSE;
+            token->type = TokenType_ELSE;
         }
         else if (strcmp(value, "elseif") == 0)
         {
-            token.type = TokenType_ELSEIF;
+            token->type = TokenType_ELSEIF;
         }
         else if (strcmp(value, "return") == 0)
         {
-            token.type = TokenType_RETURN;
+            token->type = TokenType_RETURN;
         }
         else if (strcmp(value, "class") == 0)
         {
-            token.type = TokenType_CLASS;
+            token->type = TokenType_CLASS;
+        }
+        else if (strcmp(value, "interface") == 0)
+        {
+            token->type = TokenType_INTERFACE;
         }
         else if (strcmp(value, "public") == 0)
         {
-            token.type = TokenType_PUBLIC;
+            token->type = TokenType_PUBLIC;
         }
         else if (strcmp(value, "protected") == 0)
         {
-            token.type = TokenType_PROTECTED;
+            token->type = TokenType_PROTECTED;
         }
         else if (strcmp(value, "private") == 0)
         {
-            token.type = TokenType_PRIVATE;
+            token->type = TokenType_PRIVATE;
         }
         else if (strcmp(value, "final") == 0)
         {
-            token.type = TokenType_FINAL;
+            token->type = TokenType_FINAL;
         }
         else if (strcmp(value, "abstract") == 0)
         {
-            token.type = TokenType_ABSTRACT;
+            token->type = TokenType_ABSTRACT;
         }
         else if (strcmp(value, "extends") == 0)
         {
-            token.type = TokenType_EXTENDS;
+            token->type = TokenType_EXTENDS;
         }
         else if (strcmp(value, "implements") == 0)
         {
-            token.type = TokenType_IMPLEMENTS;
+            token->type = TokenType_IMPLEMENTS;
         }
         else if (strcmp(value, "static") == 0)
         {
-            token.type = TokenType_STATIC;
+            token->type = TokenType_STATIC;
         }
         else if (strcmp(value, "array") == 0)
         {
-            token.type = TokenType_ARRAY;
+            token->type = TokenType_ARRAY;
         }
         else if (strcmp(value, "mixed") == 0)
         {
-            token.type = TokenType_MIXED;
+            token->type = TokenType_MIXED;
         }
         else if (*value == '+')
         {
-            token.type = TokenType_PLUS;
+            token->type = TokenType_PLUS;
         }
         else if (*value == '-')
         {
-            token.type = TokenType_MINUS;
+            token->type = TokenType_MINUS;
         }
         else if (*value == '*')
         {
-            token.type = TokenType_TIMES;
+            token->type = TokenType_TIMES;
         }
         else if (*value == '/')
         {
-            token.type = TokenType_SLASH;
+            token->type = TokenType_SLASH;
         }
         else if (*value == '\\')
         {
-            token.type = TokenType_BACKSLASH;
+            token->type = TokenType_BACKSLASH;
         }
         else if (*value == '!')
         {
-            token.type = TokenType_NOT;
+            token->type = TokenType_NOT;
         }
         else if (strcmp(value, "if") == 0)
         {
-            token.type = TokenType_IF;
+            token->type = TokenType_IF;
         }
         else if (strcmp(value, "else") == 0)
         {
-            token.type = TokenType_ELSE;
+            token->type = TokenType_ELSE;
         }
-        else if (*value == '$' && is_id(value, len))
+        else if (*value == '$')
         {
-            token.type = TokenType_VAR;
+            token->type = TokenType_DOLLAR;
         }
-        else if (*value != '$' && is_id(value, len))
+        else if (is_id(value, len))
         {
-            token.type = TokenType_ID;
+            token->type = TokenType_ID;
         }
         else if (isdigit(*value))
         {
-            token.type = TokenType_DIGIT;
+            token->type = TokenType_DIGIT;
         }
         else if (*value == ';')
         {
-            token.type = TokenType_SEMI;
+            token->type = TokenType_SEMI;
+        }
+        else if (*value == ':')
+        {
+            token->type = TokenType_COLON;
         }
         else if (*value == '\0')
         {
-            token.type = TokenType_EOF;
+            token->type = TokenType_EOF;
         }
         else
         {
-            token.type = TokenType_UNKN;
+            token->type = TokenType_UNKN;
         }
 
         tokens_.push_back(token);
@@ -373,16 +391,44 @@ namespace typhp
         value[len] = '\0';
         memcpy(value, input_ + start, len);
 
-        Token token;
-        token.value = value;
-        token.len = len;
-        token.location = SourceLocation{
+        Token *token = new Token();
+        token->value = value;
+        token->len = len;
+        token->location = SourceLocation{
             .start = start,
             .end = start + len,
         };
-        token.type = TokenType_HTML_TEXT;
+        token->type = TokenType_HTML_TEXT;
 
         tokens_.push_back(token);
     }
 
+    void Lexer::trim_spaces()
+    {
+
+        std::vector<Token *> temp_tokens;
+
+        Token *prev = nullptr;
+        Token *temp = nullptr;
+        std::vector<Token *>::iterator it = tokens_.begin();
+
+        for (;
+             it != tokens_.end();
+             it++)
+        {
+            temp = prev;
+            prev = *it;
+
+            if (temp != nullptr && (*it)->type == TokenType_SPACE && temp->type == TokenType_SPACE)
+            {
+                // skip
+            }
+            else
+            {
+                temp_tokens.push_back(*it);
+            }
+        }
+
+        tokens_ = temp_tokens;
+    }
 } // namespace typhp
