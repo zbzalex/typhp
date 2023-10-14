@@ -28,6 +28,14 @@
 #include "ForeachValue.h"
 #include "DynMethodCall.h"
 #include "Comment.h"
+#include "AnnotationStmt.h"
+#include "EnumDecl.h"
+#include "IncludeStmt.h"
+#include "AnonymousFunction.h"
+#include "Use.h"
+#include "ConstDecl.h"
+#include "ConstAccess.h"
+#include "ThrowStmt.h"
 
 namespace typhp
 {
@@ -54,7 +62,7 @@ namespace typhp
 
     ASTNode *Parser::parse()
     {
-        ASTNode *parent = new ASTNode();
+        ASTNode *global_scope = new ASTNode();
         while (1)
         {
             const Token *current = next();
@@ -85,8 +93,7 @@ namespace typhp
                 && nextnext->type == TokenType_DOLLAR
                 && nextnextnext != nullptr
                 && nextnextnext->type == TokenType_ID) {
-
-                parse_var_decl();
+                parse_var_decl(global_scope);
             } else if (current->type == TokenType_FUNCTION
                 && next != nullptr
                 && next->type == TokenType_SPACE
@@ -115,10 +122,13 @@ namespace typhp
             }
         }
 
-        return parent;
+        return global_scope;
     }
 
-    void Parser::parse_var_decl() {
+    void Parser::parse_var_decl(
+        ASTNode *scope
+    ) {
+
         std::cout << "var decl\n";
 
         Token *type = current();
@@ -131,8 +141,7 @@ namespace typhp
                 
         if (look_ahead(1)->type == TokenType_SEMI) {
             next();
-        }
-        else if (look_ahead(1)->type == TokenType_EQ) {
+        } else if (look_ahead(1)->type == TokenType_EQ) {
             //
         }
     }
