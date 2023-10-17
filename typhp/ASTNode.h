@@ -6,7 +6,6 @@
 
 namespace typhp
 {
-
     class ASTNode
     {
     protected:
@@ -22,7 +21,7 @@ namespace typhp
         void add(ASTNode *child);
         void remove(ASTNode *child);
         void remove(std::string &id);
-        void remove(const std::string& id);
+        void remove(const std::string &id);
         inline std::vector<ASTNode *> children() const { return children_; }
         inline void set_parent(ASTNode *parent) { parent_ = parent; }
         inline ASTNode *parent() const { parent_; }

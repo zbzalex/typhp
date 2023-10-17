@@ -8,7 +8,9 @@ namespace typhp
     class TryCatchStmt : public ASTNode
     {
     public:
-        TryCatchStmt() : ASTNode() {}
+        TryCatchStmt() : ASTNode()
+        {
+        }
     };
 }
 

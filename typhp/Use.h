@@ -8,7 +8,9 @@ namespace typhp
     class Use : public ASTNode
     {
     public:
-        Use() : ASTNode() {}
+        Use() : ASTNode()
+        {
+        }
     };
 }
 

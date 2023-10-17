@@ -9,7 +9,9 @@ namespace typhp
     class VarDecl : public ASTNode
     {
     public:
-        VarDecl() : ASTNode() {}
+        VarDecl() : ASTNode()
+        {
+        }
     };
 }
 

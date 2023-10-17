@@ -6,38 +6,38 @@
 #include <string.h>
 #include "Parser.h"
 #include "Generator.h"
+#include <fstream>
+#include <ios>
+#include <iostream>
+#include <sstream>
 
 #define VERSION "1.0.0"
 
 int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        return EXIT_FAILURE;
+    }
 
-    char *input = "<?php\n"
-                "mixed     $username;\n"
-                "function main() {}\n"
-                "interface ISome {}\n"
-                
-                "class Some {"
-                "}\n"
-                //   "require_once dirname(__DIR__).\"/vendor/autoload.php\";\n"
-                //   ""
-                //   "function main(int $argc, string[] $argv) {\n"
-                //   "return (int) 0;\n"
-                //   "}\n"
-                //   ""
-                //   "?>\n"
-                //   "<!doctype html>\n"
-                //   "<html>\n"
-                //   "<head>\n"
-                //   "<title>Web Page</title>\n"
-                //   "<meta name=\"content-type\" content=\"text/html\" />\n"
-                //   "</head>\n"
-                //   "<body>\n"
-                //   "<?php echo $content; ?>\n"
-                //   "</body></html>\n"
-                  "";
+    std::string source_file(argv[1]);
+    std::ifstream is(source_file, std::ios::binary | std::ios::ate);
+    if (!is.is_open())
+    {
+        std::cout << "Failed to open source file\n";
 
-    typhp::Lexer lexer = typhp::Lexer(input, strlen(input));
+        return EXIT_FAILURE;
+    }
+
+    std::streamsize ssize = is.tellg();
+    is.seekg(0, std::ios::beg);
+
+    std::ostringstream buf;
+    buf << is.rdbuf();
+
+    std::string input = buf.str();
+
+    typhp::Lexer lexer = typhp::Lexer((char *)input.c_str(), input.size());
     std::vector<typhp::Token *> tokens = lexer.tokenize();
 
     for (
@@ -49,14 +49,15 @@ int main(int argc, char *argv[])
         std::cout << (*it)->value << "\t"
                   << " type is " << (*it)->type << "\n";
     }
-    
+
     typhp::Parser parser(tokens);
     typhp::ASTNode *global_scope = parser.parse();
-
     typhp::Generator generator(global_scope);
 
-    std::cout << "This is the generated php source code:\n"
-              << generator.generate() << "\n";
+    std::string generated = generator.generate();
 
-    return 0;
+    std::cout << "This is the generated php source code:\n"
+              << generated << "\n";
+
+    return EXIT_SUCCESS;
 }

@@ -25,17 +25,16 @@ namespace typhp
         Token *look_ahead(int n);
         Token *current();
 
-        void parse_var_decl(
-            ASTNode *scope
-        );
+        ASTNode *parseIncludeDecl();
 
-        void parse_function_decl(
-            ASTNode *scope
-        );
+        ASTNode *parseVarDecl();
+        ASTNode *parseFunctionDecl();
+        ASTNode *parseClassDecl();
+        ASTNode *parseEnumDecl();
+        ASTNode *parseNamespaceDecl();
+        ASTNode *parseUseDecl();
 
-        void parse_class_decl(
-            ASTNode *scope
-        );
+        
     };
 
 } // namespace typhp
