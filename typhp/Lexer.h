@@ -65,6 +65,9 @@ namespace typhp
         TokenType_SPACE,
         TokenType_NEWLINE,
         TokenType_DOLLAR,
+        TokenType_USE,
+        TokenType_ENUM,
+        TokenType_NAMESPACE,
         TokenType_UNKN,
         TokenType_EOF,
     };

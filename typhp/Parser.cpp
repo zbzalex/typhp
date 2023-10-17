@@ -66,12 +66,12 @@ namespace typhp
         ASTNode *global_scope = new ASTNode();
         while (1)
         {
-            const Token *current = next();
-            if (current == nullptr)
+            const Token *curr = next();
+            if (curr == nullptr)
                 break;
 
             // skip spaces
-            if (*current->value == '\x20' || *current->value == '\n')
+            if (*curr->value == '\x20' || *curr->value == '\n')
                 continue;
 
             // std::cout << current->value << "\t"
@@ -80,9 +80,127 @@ namespace typhp
             Token *next = look_ahead(1);
             Token *nextnext = look_ahead(2);
             Token *nextnextnext = look_ahead(3);
-            
+
+            switch (curr->type)
+            {
+            case TokenType_INCLUDE:
+            case TokenType_INCLUDE_ONCE:
+            case TokenType_REQUIRE:
+            case TokenType_REQUIRE_ONCE:
+            {
+                global_scope->add(parse_include_decl());
+            }
+            break;
+            case TokenType_MIXED:
+            case TokenType_ARRAY:
+            case TokenType_BOOL:
+            case TokenType_STRING:
+            case TokenType_INT:
+            case TokenType_ID:
+            {
+                switch (next->type)
+                {
+                case TokenType_FUNCTION:
+                {
+                    global_scope->add(parse_function_decl());
+                }
+                break;
+                case TokenType_DOLLAR:
+                {
+                    global_scope->add(parse_var_decl());
+                }
+                break;
+                }
+            }
+            break;
+            case TokenType_FINAL:
+            case TokenType_ABSTRACT:
+            case TokenType_INTERFACE:
+            case TokenType_CLASS:
+            {
+                global_scope->add(parse_class_decl());
+            }
+            break;
+            case TokenType_ENUM:
+            {
+                global_scope->add(parse_enum_decl());
+            }
+            break;
+            case TokenType_USE:
+            {
+                global_scope->add(parse_use_decl());
+            }
+            break;
+            case TokenType_NAMESPACE:
+            {
+                global_scope->add(parse_namespace_decl());
+            }
+            break;
+            case TokenType_HTML_TEXT:
+            {
+            }
+            break;
+            }
         }
 
         return global_scope;
+    }
+
+    ASTNode *Parser::parse_include_decl()
+    {
+        IncludeStmt *ast = new IncludeStmt();
+        Token *tok = nullptr;
+
+        do
+        {
+            tok = next();
+
+            switch (tok->type)
+            {
+            case TokenType_PERIOD:
+            {
+            }
+            break;
+            case TokenType_CONST_STRING:
+            {
+                ast->add(new Literal(std::string(tok->value)));
+            }
+            break;
+            }
+        } while (tok != nullptr && tok->type != TokenType_SEMI);
+
+        return ast;
+    }
+
+    ASTNode *Parser::parse_var_decl()
+    {
+        return nullptr;
+    }
+
+    ASTNode *Parser::parse_function_decl()
+    {
+        return nullptr;
+    }
+
+    ASTNode *Parser::parse_class_decl()
+    {
+        Token *kind = nullptr;
+
+        return nullptr;
+    }
+
+    ASTNode *Parser::parse_enum_decl()
+    {
+        return nullptr;
+    }
+
+    ASTNode *Parser::parse_use_decl()
+    {
+        return nullptr;
+    }
+
+    ASTNode *Parser::parse_namespace_decl()
+    {
+        return nullptr;
     }
 } // namespace typhp;
