@@ -249,6 +249,14 @@ namespace typhp
         {
             token->type = TokenType_CONST_STRING;
         }
+        else if (*value == '<')
+        {
+            token->type = TokenType_LARROW;
+        }
+        else if (*value == '>')
+        {
+            token->type = TokenType_RARROW;
+        }
         else if (strcmp(value, "int") == 0)
         {
             token->type = TokenType_INT;
@@ -421,12 +429,10 @@ namespace typhp
 
             if (temp != nullptr && (*it)->type == TokenType_SPACE && temp->type == TokenType_SPACE)
             {
-                // skip
+                continue;
             }
-            else
-            {
-                temp_tokens.push_back(*it);
-            }
+
+            temp_tokens.push_back(*it);
         }
 
         tokens_ = temp_tokens;

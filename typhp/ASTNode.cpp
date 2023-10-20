@@ -1,6 +1,7 @@
 #include "ASTNode.h"
 #include <algorithm>
 #include <string>
+#include <typeinfo>
 
 namespace typhp
 {
@@ -19,20 +20,8 @@ namespace typhp
         }
     }
 
-    void ASTNode::remove(std::string &id)
+    const std::type_info& ASTNode::type()
     {
-        const auto it = std::find_if(children_.begin(),
-                                     children_.end(), [&id](auto it)
-                                     { return it->get_id() == id; });
-        if (it != children_.end())
-        {
-            children_.erase(it);
-        }
+        return typeid(ASTNode);
     }
-
-    void ASTNode::remove(const std::string &id)
-    {
-        remove(id);
-    }
-
 } // namespace typhp

@@ -2,6 +2,7 @@
 #define TYPHP_INCLUDESTMT_H
 
 #include "ASTNode.h"
+#include <typeinfo>
 
 namespace typhp
 {
@@ -11,6 +12,8 @@ namespace typhp
         IncludeStmt() : ASTNode()
         {
         }
+
+        const std::type_info& type() { return typeid(IncludeStmt); }
     };
 }
 

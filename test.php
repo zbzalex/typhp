@@ -1,15 +1,21 @@
 <?php
 
+// Hello! This is single line comment
+
+/**
+ * Hello
+ */
 include __DIR__ . "/vendor/autoload.php";
 
-final class Main
+function main()
 {
-    public static function main(
-        mixed $argc,
-        mixed $args = []
-    ): int {
-        echo sprintf("count args = %d", $args);
-
-        return 0;
-    }
+    echo "hello\n";
 }
+
+?>
+<b>hello</b>
+<?php
+
+echo "asd";
+
+?>

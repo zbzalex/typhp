@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     {
         return EXIT_FAILURE;
     }
-
+    
     std::string source_file(argv[1]);
     std::ifstream is(source_file, std::ios::binary | std::ios::ate);
     if (!is.is_open())
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    std::streamsize ssize = is.tellg();
+    //std::streamsize ssize = is.tellg();
     is.seekg(0, std::ios::beg);
 
     std::ostringstream buf;

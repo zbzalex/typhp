@@ -68,6 +68,8 @@ namespace typhp
         TokenType_USE,
         TokenType_ENUM,
         TokenType_NAMESPACE,
+        TokenType_LARROW,
+        TokenType_RARROW,
         TokenType_UNKN,
         TokenType_EOF,
     };
