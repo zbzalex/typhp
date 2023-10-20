@@ -3,7 +3,6 @@
 
 #include "ASTNode.h"
 #include <string>
-#include <typeinfo>
 
 namespace typhp
 {
@@ -15,7 +14,7 @@ namespace typhp
         HtmlText(
             const std::string &html) : ASTNode(), value(html) {}
 
-        const std::type_info &type() { return typeid(HtmlText); }
+        virtual const std::string generate() const override;
     };
 }
 

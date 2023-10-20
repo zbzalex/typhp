@@ -9,16 +9,13 @@ namespace typhp
     class Literal : public ASTNode
     {
     private:
-        std::string value_;
-
     public:
-        Literal(std::string &value) : ASTNode(), value_(value) {}
-        Literal(const std::string &value) : ASTNode(), value_(value) {}
+        std::string value;
 
-        const std::string &get_value() const
-        {
-            return value_;
-        }
+        Literal() : ASTNode() {}
+        Literal(const std::string &new_val) : ASTNode(), value(new_val) {}
+
+        virtual const std::string generate() const override;
     };
 }
 

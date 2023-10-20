@@ -2,7 +2,6 @@
 #include "ASTNode.h"
 #include "Lexer.h"
 #include <iostream>
-
 #include "ClassDecl.h"
 #include "AssignExpr.h"
 #include "FunctionCall.h"
@@ -37,8 +36,12 @@
 #include "ConstAccess.h"
 #include "ThrowStmt.h"
 #include "IncludeOnceStmt.h"
-#include "PhpCode.h"
+#include "PhpStartTag.h"
+#include "PhpCloseTag.h"
 #include "HtmlText.h"
+#include <sstream>
+#include "BinOp.h"
+#include "Num.h"
 
 namespace typhp
 {
@@ -71,7 +74,7 @@ namespace typhp
         return tokens_.at(cursor_ + n);
     }
 
-    Token *Parser::current()
+    Token *Parser::curr()
     {
         return look_ahead(0);
     }
@@ -79,28 +82,26 @@ namespace typhp
     ASTNode *Parser::parse()
     {
         ASTNode *root = new ASTNode();
-        while (1)
+        Token *curr_ = nullptr;
+        while ((curr_ = next()) != nullptr)
         {
-            const Token *curr = next();
-            if (curr == nullptr)
-                break;
-
-            // skip spaces
-            if (*curr->value == '\x20' || *curr->value == '\n')
-                continue;
-
-            switch (curr->type)
+            switch (curr_->type)
             {
+            case TokenType_NEWLINE:
+            {
+                std::cout << "new line\n";
+                root->children.push_back(new Literal(curr_->value));
+                break;
+            }
+            break;
             case TokenType_PHP_START_TAG:
             {
-                // PhpCode *ast = new PhpCode();
-                // root->add(ast);
-                // root = ast;
+                root->children.push_back(new PhpStartTag());
             }
             break;
             case TokenType_PHP_CLOSE_TAG:
             {
-                // root = root->parent();
+                root->children.push_back(new PhpCloseTag());
             }
             break;
             case TokenType_SLASH:
@@ -113,7 +114,7 @@ namespace typhp
                     case TokenType_SLASH:
                     case TokenType_TIMES:
                     {
-                        root->add(parse_comment());
+                        root->children.push_back(parse_comment());
                     }
                     break;
                     }
@@ -125,7 +126,7 @@ namespace typhp
             case TokenType_REQUIRE:
             case TokenType_REQUIRE_ONCE:
             {
-                // root->add(parse_include_decl());
+                root->children.push_back(parse_include_decl());
             }
             break;
             case TokenType_MIXED:
@@ -169,69 +170,17 @@ namespace typhp
             break;
             case TokenType_HTML_TEXT:
             {
-
-                root->add(new HtmlText(curr->value));
+                root->children.push_back(new HtmlText(curr_->value));
             }
             break;
             case TokenType_LARROW:
             {
-                if (!expect(TokenType_LARROW))
-                {
-                    std::cout << "left arrow expected\n";
-                    break;
-                }
-
-                std::cout << "parse annotation\n";
-
-                skip_spaces();
-
-                if (!expect(TokenType_ID))
-                {
-                    std::cout << "id expected\n";
-                    break;
-                }
             }
             break;
             }
         }
 
         return root;
-    }
-
-    ASTNode *Parser::parse_include_decl()
-    {
-        IncludeStmt *ast = nullptr;
-        Token *tok = nullptr;
-        Token *curr = current();
-
-        switch (curr->type)
-        {
-        case TokenType_INCLUDE:
-        {
-            ast = new IncludeStmt();
-        }
-        break;
-        }
-
-        do
-        {
-            tok = next();
-
-            switch (tok->type)
-            {
-            case TokenType_PERIOD:
-            {
-            }
-            break;
-            case TokenType_CONST_STRING:
-            {
-                ast->add(new Literal(std::string(tok->value)));
-            }
-            break;
-            }
-        } while (tok != nullptr && tok->type != TokenType_SEMI);
-
-        return ast;
     }
 
     void Parser::skip_spaces()
@@ -267,14 +216,43 @@ namespace typhp
         return false;
     }
 
+    ASTNode *Parser::parse_include_decl()
+    {
+        IncludeStmt *ast = new IncludeStmt();
+
+        Token *tok = nullptr;
+        while ((tok = next()) != nullptr)
+        {
+            if (tok != nullptr && tok->type == TokenType_SEMI)
+                break;
+
+            switch (tok->type)
+            {
+            case TokenType_CONST_STRING:
+            {
+                Literal *child = new Literal();
+                child->value = tok->value;
+
+                ast->children.push_back(child);
+            }
+            break;
+            }
+        }
+
+        return ast;
+    }
+
     ASTNode *Parser::parse_comment()
     {
         Comment *ast = new Comment();
 
+        Token *curr_ = curr();
         Token *next_ = next();
 
-        ast->value += current()->value;
-        ast->value += next_->value;
+        std::stringstream ss;
+
+        ss << curr_->value
+           << next_->value;
 
         bool multiline = false;
 
@@ -296,7 +274,7 @@ namespace typhp
             while ((tok = next()) != nullptr)
             {
 
-                ast->value += tok->value;
+                ss << tok->value;
 
                 if (tmp != nullptr && tmp->type == TokenType_TIMES && tok->type == TokenType_SLASH)
                     break;
@@ -312,9 +290,13 @@ namespace typhp
                 if (tok->type == TokenType_NEWLINE)
                     break;
 
-                ast->value += tok->value;
+                ss << tok->value;
             }
         }
+
+        ss << "\n";
+
+        ast->value = ss.str();
 
         return ast;
     }

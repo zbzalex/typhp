@@ -2,7 +2,6 @@
 #define TYPHP_ANNOTATIONSTMT_H
 
 #include "ASTNode.h"
-#include <typeinfo>
 
 namespace typhp
 {
@@ -12,8 +11,6 @@ namespace typhp
         AnnotationStmt() : ASTNode()
         {
         }
-
-        const std::type_info &type() { return typeid(AnnotationStmt); }
     };
 }
 

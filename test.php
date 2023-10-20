@@ -5,7 +5,8 @@
 /**
  * Hello
  */
-include __DIR__ . "/vendor/autoload.php";
+
+include "../vendor/autoload.php";
 
 function main()
 {

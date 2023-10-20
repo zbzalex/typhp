@@ -2,7 +2,6 @@
 #define TYPHP_ARRAYEXPR_H
 
 #include "ASTNode.h"
-#include <typeinfo>
 
 namespace typhp
 {
@@ -12,8 +11,6 @@ namespace typhp
         ArrayExpr() : ASTNode()
         {
         }
-
-        const std::type_info& type() { return typeid(ArrayExpr); }
     };
 }
 

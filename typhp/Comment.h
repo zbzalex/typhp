@@ -3,7 +3,6 @@
 
 #include "ASTNode.h"
 #include <string>
-#include <typeinfo>
 
 namespace typhp
 {
@@ -17,7 +16,7 @@ namespace typhp
         {
         }
 
-        const std::type_info &type() { return typeid(Comment); }
+        virtual const std::string generate() const;
     };
 }
 

@@ -5,9 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Parser.h"
-#include "Generator.h"
 #include <fstream>
-#include <ios>
 #include <iostream>
 #include <sstream>
 
@@ -19,7 +17,7 @@ int main(int argc, char *argv[])
     {
         return EXIT_FAILURE;
     }
-    
+
     std::string source_file(argv[1]);
     std::ifstream is(source_file, std::ios::binary | std::ios::ate);
     if (!is.is_open())
@@ -29,7 +27,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    //std::streamsize ssize = is.tellg();
+    // std::streamsize ssize = is.tellg();
     is.seekg(0, std::ios::beg);
 
     std::ostringstream buf;
@@ -51,13 +49,10 @@ int main(int argc, char *argv[])
     }
 
     typhp::Parser parser(tokens);
-    typhp::ASTNode *global_scope = parser.parse();
-    typhp::Generator generator(global_scope);
-
-    std::string generated = generator.generate();
+    typhp::ASTNode *root = parser.parse();
 
     std::cout << "This is the generated php source code:\n"
-              << generated << "\n";
+              << root->generate() << "\n";
 
     return EXIT_SUCCESS;
 }

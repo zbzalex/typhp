@@ -2,7 +2,6 @@
 #define TYPHP_ANONYMOUSFUNCTION_H
 
 #include "ASTNode.h"
-#include <typeinfo>
 
 namespace typhp
 {
@@ -10,8 +9,6 @@ namespace typhp
     {
     public:
         AnonymousFunction() : ASTNode() {}
-
-        const std::type_info &type() { return typeid(AnonymousFunction); }
     };
 }
 

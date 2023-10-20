@@ -12,7 +12,7 @@ namespace typhp
     {
     private:
         std::vector<Token *> tokens_;
-        int cursor_ = 0;
+        int cursor_ = -1;
 
     public:
         Parser(std::vector<Token *> tokens) : tokens_(tokens) {}
@@ -23,7 +23,7 @@ namespace typhp
 
         Token *next();
         Token *look_ahead(int n);
-        Token *current();
+        Token *curr();
         bool expect(TokenType token_type);
         Token *back();
 
