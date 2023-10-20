@@ -30,6 +30,7 @@ namespace typhp
         TokenType_ELSEIF,
         TokenType_RETURN,
         TokenType_SEMI,
+        TokenType_SEMICOLON,
         TokenType_CLASS,
         TokenType_INTERFACE,
         TokenType_PUBLIC,
@@ -89,7 +90,7 @@ namespace typhp
         SourceLocation location;
     };
 
-    constexpr char *delims = "@()=,[]{};:<>\\.-!?/$";
+    constexpr char *delims = "@()=,[]{};:<>\\.-+!?/$";
     constexpr char *blanks = "\x20\n\r\t";
     constexpr char *alnums = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ01234567890";
     constexpr char *alphas = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ";

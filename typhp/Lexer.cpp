@@ -365,6 +365,14 @@ namespace typhp
         {
             token->type = TokenType_DOLLAR;
         }
+        else if (*value == '.')
+        {
+            token->type = TokenType_PERIOD;
+        }
+        else if (*value == ',')
+        {
+            token->type = TokenType_SEMI;
+        }
         else if (is_id(value, len))
         {
             token->type = TokenType_ID;
@@ -375,7 +383,7 @@ namespace typhp
         }
         else if (*value == ';')
         {
-            token->type = TokenType_SEMI;
+            token->type = TokenType_SEMICOLON;
         }
         else if (*value == ':')
         {

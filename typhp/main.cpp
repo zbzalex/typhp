@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     typhp::Lexer lexer = typhp::Lexer((char *)input.c_str(), input.size());
     std::vector<typhp::Token *> tokens = lexer.tokenize();
 
+#ifdef TYPHP_DEBUG
     for (
         auto it = tokens.begin();
         it != tokens.end();
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
         std::cout << (*it)->value << "\t"
                   << " type is " << (*it)->type << "\n";
     }
+#endif
 
     typhp::Parser parser(tokens);
     typhp::ASTNode *root = parser.parse();

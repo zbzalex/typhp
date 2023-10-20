@@ -42,6 +42,8 @@
 #include <sstream>
 #include "BinOp.h"
 #include "Num.h"
+#include <stack>
+#include "VarAccess.h"
 
 namespace typhp
 {
@@ -89,7 +91,6 @@ namespace typhp
             {
             case TokenType_NEWLINE:
             {
-                std::cout << "new line\n";
                 root->children.push_back(new Literal(curr_->value));
                 break;
             }
@@ -220,22 +221,95 @@ namespace typhp
     {
         IncludeStmt *ast = new IncludeStmt();
 
+        std::stack<ASTNode *> stack_;
+
+        BinOp *top = nullptr;
+
         Token *tok = nullptr;
         while ((tok = next()) != nullptr)
         {
-            if (tok != nullptr && tok->type == TokenType_SEMI)
+            if (tok->type == TokenType_SEMICOLON)
                 break;
 
             switch (tok->type)
             {
             case TokenType_CONST_STRING:
             {
-                Literal *child = new Literal();
-                child->value = tok->value;
-
-                ast->children.push_back(child);
+                Literal *child = new Literal(tok->value);
+                stack_.push(child);
             }
             break;
+            case TokenType_SEMI:
+            case TokenType_PERIOD:
+            {
+                BinOp *op = new BinOp();
+                op->value = tok->value;
+
+                if (top == nullptr)
+                {
+                    top = op;
+                }
+                else
+                {
+                    top->children.push_back(op);
+                    op->parent = top;
+
+                    top = op;
+                }
+
+                if (!stack_.empty())
+                {
+                    top->children.push_back(stack_.top());
+                    stack_.pop();
+                }
+            }
+            break;
+            case TokenType_ID:
+            {
+                ConstAccess *child = new ConstAccess();
+                child->value = tok->value;
+                stack_.push(child);
+            }
+            break;
+            case TokenType_DOLLAR:
+            {
+                Token *name = next();
+
+                VarAccess *child = new VarAccess();
+                child->value = name->value;
+                stack_.push(child);
+            }
+            break;
+            case TokenType_DIGIT:
+            {
+                Num *child = new Num();
+                child->value = tok->value;
+                stack_.push(child);
+            }
+            break;
+            }
+        }
+
+        if (top != nullptr)
+        {
+            if (!stack_.empty())
+            {
+                top->children.push_back(stack_.top());
+                stack_.pop();
+            }
+
+            ASTNode *parent = top;
+            while (parent != nullptr)
+            {
+                if (parent->parent == nullptr)
+                    break;
+
+                parent = parent->parent;
+            }
+
+            if (parent != nullptr)
+            {
+                ast->children.push_back(parent);
             }
         }
 
@@ -340,4 +414,4 @@ namespace typhp
     {
         return nullptr;
     }
-} // namespace typhp;
+} // namespace typhp

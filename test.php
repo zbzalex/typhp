@@ -2,16 +2,19 @@
 
 // Hello! This is single line comment
 
+include __DIR__ . "../vendor/autoload.php";
+
 /**
- * Hello
+ * This is entry point function
  */
-
-include "../vendor/autoload.php";
-
 function main()
 {
     echo "hello\n";
 }
+
+// call main
+
+main();
 
 ?>
 <b>hello</b>

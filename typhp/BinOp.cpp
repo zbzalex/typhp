@@ -1,5 +1,6 @@
 #include "BinOp.h"
 #include <sstream>
+#include <iostream>
 
 namespace typhp
 {
@@ -7,10 +8,10 @@ namespace typhp
     {
         std::stringstream ss;
 
-        for (const ASTNode *child : children)
-        {
-            ss << child->generate();
-        }
+        ss << children[0]->generate()
+           << value
+           << children[1]->generate()
+           ;
 
         return ss.str();
     }

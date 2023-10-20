@@ -10,6 +10,7 @@ namespace typhp
     {
     public:
         BinOp() : ASTNode() {}
+
         virtual const std::string generate() const override;
     };
 }

@@ -27,5 +27,7 @@ add_executable(typhp
 	${CMAKE_CURRENT_SOURCE_DIR}/Num.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/HtmlText.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/BinOp.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/ConstAccess.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VarAccess.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
 )

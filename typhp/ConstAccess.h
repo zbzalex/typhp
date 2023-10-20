@@ -2,6 +2,7 @@
 #define TYPHP_CONSTACCESS_H
 
 #include "ASTNode.h"
+#include <string>
 
 namespace typhp
 {
@@ -9,6 +10,7 @@ namespace typhp
     {
     public:
         ConstAccess() : ASTNode() {}
+        virtual const std::string generate() const override;
     };
 }
 
