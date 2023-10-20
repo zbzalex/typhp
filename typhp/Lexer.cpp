@@ -345,10 +345,6 @@ namespace typhp
         {
             token->type = TokenType_SLASH;
         }
-        else if (*value == '\\')
-        {
-            token->type = TokenType_BACKSLASH;
-        }
         else if (*value == '!')
         {
             token->type = TokenType_NOT;

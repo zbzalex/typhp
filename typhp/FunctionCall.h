@@ -2,6 +2,7 @@
 #define TYPHP_FUNCTIONCALL_H
 
 #include "ASTNode.h"
+#include <string>
 
 namespace typhp
 {
@@ -9,6 +10,8 @@ namespace typhp
     {
     public:
         FunctionCall() : ASTNode() {}
+
+        virtual const std::string generate() const override;
     };
 }
 

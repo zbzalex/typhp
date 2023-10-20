@@ -29,7 +29,9 @@ namespace typhp
 
         ASTNode *parse_comment();
         ASTNode *parse_include_decl();
-        ASTNode *parse_var_decl();
+        ASTNode *parse_var_decl(
+            Token *type
+        );
         ASTNode *parse_function_decl();
         ASTNode *parse_class_decl();
         ASTNode *parse_enum_decl();

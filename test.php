@@ -4,6 +4,10 @@
 
 include __DIR__ . "../vendor/autoload.php";
 
+mixed $a;
+
+\Hill\Product $product;
+
 /**
  * This is entry point function
  */

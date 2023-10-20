@@ -18,6 +18,7 @@ add_compile_definitions(
 add_executable(typhp
 	${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Lexer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/ASTNode.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Comment.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/PhpStartTag.cpp
@@ -29,5 +30,7 @@ add_executable(typhp
 	${CMAKE_CURRENT_SOURCE_DIR}/BinOp.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/ConstAccess.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/VarAccess.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Parser.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VarDecl.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/FunctionCall.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/FunctionDecl.cpp
 )

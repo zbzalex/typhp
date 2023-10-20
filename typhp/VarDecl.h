@@ -9,9 +9,13 @@ namespace typhp
     class VarDecl : public ASTNode
     {
     public:
+        std::string type;
+
         VarDecl() : ASTNode()
         {
         }
+
+        virtual const std::string generate() const override;
     };
 }
 

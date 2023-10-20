@@ -136,14 +136,44 @@ namespace typhp
             case TokenType_STRING:
             case TokenType_INT:
             case TokenType_ID:
+            {
+                Token *type_ = curr_;
+
+                Token *next_ = look_ahead(1);
+                if (next_ != nullptr && *next_->value == '\x20')
+                {
+                    skip_spaces();
+                }
+
+                if (next_ == nullptr)
+                {
+                    break;
+                }
+
+                if (next_->type == TokenType_LPAREN)
+                {
+                    FunctionCall *child = new FunctionCall();
+                    child->value = type_->value;
+
+                    expect(TokenType_RPAREN);
+                    expect(TokenType_SEMICOLON);
+
+                    root->children.push_back(child);
+                }
+                else if (next_->type == TokenType_DOLLAR)
+                {
+                    next();
+                    root->children.push_back(parse_var_decl(curr_));
+                }
+            }
+            break;
             case TokenType_DOLLAR:
             {
-                // root->add(parse_var_decl());
             }
             break;
             case TokenType_FUNCTION:
             {
-                // root->add(parse_function_decl());
+                root->children.push_back(parse_function_decl());
             }
             break;
             case TokenType_FINAL:
@@ -375,22 +405,31 @@ namespace typhp
         return ast;
     }
 
-    ASTNode *Parser::parse_var_decl()
+    ASTNode *Parser::parse_var_decl(Token *type)
     {
-        return nullptr;
+        Token *name = next();
+
+        VarDecl *child = new VarDecl();
+        child->type = type->value;
+        child->value = name->value;
+
+        return child;
     }
 
     ASTNode *Parser::parse_function_decl()
     {
-        std::cout << "func decl\n";
+        next();
+        Token *name = next();
 
-        skip_spaces();
+        FunctionDecl *child = new FunctionDecl();
+        child->value = name->value;
 
-        Token *id = next();
+        expect(TokenType_LPAREN);
+        expect(TokenType_RPAREN);
+        expect(TokenType_LBRACE);
+        expect(TokenType_RBRACE);
 
-        std::cout << id->value << "\n";
-
-        return nullptr;
+        return child;
     }
 
     ASTNode *Parser::parse_class_decl()

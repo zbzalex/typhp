@@ -90,11 +90,11 @@ namespace typhp
         SourceLocation location;
     };
 
-    constexpr char *delims = "@()=,[]{};:<>\\.-+!?/$";
+    constexpr char *delims = "@()=,[]{};:<>.-+!?/$";
     constexpr char *blanks = "\x20\n\r\t";
     constexpr char *alnums = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ01234567890";
     constexpr char *alphas = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ";
-    constexpr char *id     = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ01234567890_";
+    constexpr char *id     = "abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ01234567890_\\";
     
     bool is_blank(char c);
     bool is_delim(char c);
