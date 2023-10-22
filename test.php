@@ -2,11 +2,12 @@
 
 // Hello! This is single line comment
 
-include __DIR__ . "../vendor/autoload.php";
+include_once __DIR__ . "../vendor/autoload.php";
 
 mixed $a;
 
 \Hill\Product $product;
+
 
 /**
  * This is entry point function

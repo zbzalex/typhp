@@ -2,7 +2,7 @@
 #define TYPHP_INCLUDEONCESTMT_H
 
 #include "ASTNode.h"
-#include <typeinfo>
+#include <string>
 
 namespace typhp
 {
@@ -16,7 +16,7 @@ namespace typhp
         {
         }
 
-        const std::type_info &type() { return typeid(IncludeOnceStmt); }
+        virtual const std::string generate() const override;
     };
 }
 

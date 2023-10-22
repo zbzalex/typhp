@@ -138,37 +138,64 @@ namespace typhp
             case TokenType_ID:
             {
                 Token *type_ = curr_;
-
                 Token *next_ = look_ahead(1);
-                if (next_ != nullptr && *next_->value == '\x20')
-                {
-                    skip_spaces();
-                }
-
                 if (next_ == nullptr)
                 {
-                    break;
+                    std::cout
+                        << "Unexpected symbol"
+                        << " "
+                        << "on line"
+                        << curr_->location.line
+                        << "\n";
                 }
-
-                if (next_->type == TokenType_LPAREN)
+                else
                 {
-                    FunctionCall *child = new FunctionCall();
-                    child->value = type_->value;
+                    if (is_space(next_))
+                    {
+                        skip_spaces();
+                    }
 
-                    expect(TokenType_RPAREN);
-                    expect(TokenType_SEMICOLON);
+                    if (next_->type == TokenType_LPAREN)
+                    {
+                        FunctionCall *child = new FunctionCall();
+                        child->value = type_->value;
 
-                    root->children.push_back(child);
-                }
-                else if (next_->type == TokenType_DOLLAR)
-                {
-                    next();
-                    root->children.push_back(parse_var_decl(curr_));
+                        expect(TokenType_RPAREN);
+                        expect(TokenType_SEMICOLON);
+
+                        root->children.push_back(child);
+                    }
+                    else if (next_->type == TokenType_DOLLAR)
+                    {
+                        next();
+                        root->children.push_back(parse_var_decl(curr_));
+                    }
+                    else
+                    {
+                        std::cout
+                            << "Unexpected symbol"
+                            << " "
+                            << "on line"
+                            << curr_->location.line
+                            << "\n";
+                    }
                 }
             }
             break;
             case TokenType_DOLLAR:
             {
+                Token *curr_ = curr();
+                Token *name_ = next();
+                if (name_ == nullptr || name_->type != TokenType_ID)
+                {
+
+                    std::cout
+                        << "Variable name is not defined"
+                        << " "
+                        << "on line "
+                        << curr_->location.line
+                        << "\n";
+                }
             }
             break;
             case TokenType_FUNCTION:
@@ -214,13 +241,18 @@ namespace typhp
         return root;
     }
 
+    bool Parser::is_space(Token *tok)
+    {
+        return tok != nullptr && *tok->value == '\x20';
+    }
+
     void Parser::skip_spaces()
     {
         Token *tok = nullptr;
         while (1)
         {
             tok = next();
-            if (tok == nullptr || *tok->value == '\x20')
+            if (tok == nullptr || is_space(tok))
             {
                 break;
             }
@@ -247,14 +279,13 @@ namespace typhp
         return false;
     }
 
-    ASTNode *Parser::parse_include_decl()
+    ASTNode *Parser::parse_expr()
     {
-        IncludeStmt *ast = new IncludeStmt();
+        ASTNode *ast = new ASTNode();
 
         std::stack<ASTNode *> stack_;
 
         BinOp *top = nullptr;
-
         Token *tok = nullptr;
         while ((tok = next()) != nullptr)
         {
@@ -342,6 +373,40 @@ namespace typhp
                 ast->children.push_back(parent);
             }
         }
+
+        return ast;
+    }
+
+    ASTNode *Parser::parse_include_decl()
+    {
+        Token *curr_ = curr();
+
+        ASTNode *ast = new IncludeStmt();
+        switch (curr_->type)
+        {
+        // case TokenType_INCLUDE:
+        // {
+        //     ast = new IncludeStmt();
+        // }
+        // break;
+        case TokenType_INCLUDE_ONCE:
+        {
+            ast = new IncludeOnceStmt();
+        }
+        break;
+        case TokenType_REQUIRE:
+        {
+            // ast = new RequireStmt();
+        }
+        break;
+        case TokenType_REQUIRE_ONCE:
+        {
+            // ast = new RequireOnceStmt();
+        }
+        break;
+        }
+
+        ast->children.push_back(parse_expr());
 
         return ast;
     }

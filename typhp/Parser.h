@@ -4,6 +4,7 @@
 #include "Lexer.h"
 #include <vector>
 #include "ASTNode.h"
+#include <string>
 
 namespace typhp
 {
@@ -36,7 +37,10 @@ namespace typhp
         ASTNode *parse_class_decl();
         ASTNode *parse_enum_decl();
         ASTNode *parse_namespace_decl();
-        ASTNode *parse_use_decl();        
+        ASTNode *parse_use_decl();
+        ASTNode *parse_expr();
+
+        bool is_space(Token *tok);
     };
 
 } // namespace typhp

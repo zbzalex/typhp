@@ -24,6 +24,7 @@ add_executable(typhp
 	${CMAKE_CURRENT_SOURCE_DIR}/PhpStartTag.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/PhpCloseTag.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/IncludeStmt.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/IncludeOnceStmt.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Literal.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Num.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/HtmlText.cpp
