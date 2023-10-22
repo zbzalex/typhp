@@ -2,6 +2,7 @@
 #define TYPHP_NAMESPACEDECL_H
 
 #include "ASTNode.h"
+#include <string>
 
 namespace typhp
 {
@@ -11,6 +12,8 @@ namespace typhp
         NamespaceDecl() : ASTNode()
         {
         }
+
+        virtual const std::string generate() const override;
     };
 }
 

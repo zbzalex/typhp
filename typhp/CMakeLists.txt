@@ -34,4 +34,6 @@ add_executable(typhp
 	${CMAKE_CURRENT_SOURCE_DIR}/VarDecl.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/FunctionCall.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/FunctionDecl.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/NamespaceDecl.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/ClassDecl.cpp
 )

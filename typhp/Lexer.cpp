@@ -329,6 +329,14 @@ namespace typhp
         {
             token->type = TokenType_MIXED;
         }
+        else if (strcmp(value, "namespace") == 0)
+        {
+            token->type = TokenType_NAMESPACE;
+        }
+        else if (strcmp(value, "use") == 0)
+        {
+            token->type = TokenType_MIXED;
+        }
         else if (*value == '+')
         {
             token->type = TokenType_PLUS;

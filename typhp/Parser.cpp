@@ -173,14 +173,15 @@ namespace typhp
 
                             if (!expect(TokenType_RPAREN))
                             {
+                                std::cout
+                                    << "Expected )\n";
                             }
                             else
                             {
-
-
-                                
                                 if (!expect(TokenType_SEMICOLON))
                                 {
+                                    std::cout
+                                        << "Exepected ;\n";
                                 }
                                 else
                                 {
@@ -234,7 +235,7 @@ namespace typhp
             case TokenType_INTERFACE:
             case TokenType_CLASS:
             {
-                // root->add(parse_class_decl());
+                root->children.push_back(parse_class_decl());
             }
             break;
             case TokenType_ENUM:
@@ -249,7 +250,7 @@ namespace typhp
             break;
             case TokenType_NAMESPACE:
             {
-                // root->add(parse_namespace_decl());
+                root->children.push_back(parse_namespace_decl());
             }
             break;
             case TokenType_HTML_TEXT:
@@ -541,9 +542,40 @@ namespace typhp
 
     ASTNode *Parser::parse_class_decl()
     {
-        // Token *kind = nullptr;
+        ASTNode *ast = new ClassDecl();
 
-        return nullptr;
+        bool is_interface = false;
+
+        Token *curr_ = curr();
+        switch (curr_->type)
+        {
+        case TokenType_INTERFACE:
+        {
+        }
+        break;
+        case TokenType_ABSTRACT:
+        {
+        }
+        break;
+        case TokenType_FINAL:
+        {
+        }
+        break;
+        }
+
+        next(); // space
+
+        Token *name = next();
+
+        ast->value = name->value;
+
+        expect(TokenType_LBRACE);
+
+        // class body there
+
+        expect(TokenType_RBRACE);
+
+        return ast;
     }
 
     ASTNode *Parser::parse_enum_decl()
@@ -558,6 +590,16 @@ namespace typhp
 
     ASTNode *Parser::parse_namespace_decl()
     {
-        return nullptr;
+        NamespaceDecl *ast = new NamespaceDecl();
+
+        next(); // skip space
+
+        Token *name = next();
+
+        ast->value = name->value;
+
+        expect(TokenType_SEMICOLON);
+
+        return ast;
     }
 } // namespace typhp

@@ -1,5 +1,7 @@
 <?php
 
+namespace Hill;
+
 // Hello! This is single line comment
 
 include_once __DIR__ . "../vendor/autoload.php";
@@ -20,6 +22,10 @@ function main() : void
 // call main
 
 main();
+
+class Application {
+    
+}
 
 ?>
 <b>hello</b>
