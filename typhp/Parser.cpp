@@ -144,7 +144,7 @@ namespace typhp
                     std::cout
                         << "Unexpected symbol"
                         << " "
-                        << "on line"
+                        << "on line "
                         << curr_->location.line
                         << "\n";
                 }
@@ -155,29 +155,55 @@ namespace typhp
                         skip_spaces();
                     }
 
-                    if (next_->type == TokenType_LPAREN)
+                    next_ = look_ahead(1);
+                    if (next_ == nullptr)
                     {
-                        FunctionCall *child = new FunctionCall();
-                        child->value = type_->value;
-
-                        expect(TokenType_RPAREN);
-                        expect(TokenType_SEMICOLON);
-
-                        root->children.push_back(child);
-                    }
-                    else if (next_->type == TokenType_DOLLAR)
-                    {
-                        next();
-                        root->children.push_back(parse_var_decl(curr_));
+                        // TODO: print error
                     }
                     else
                     {
-                        std::cout
-                            << "Unexpected symbol"
-                            << " "
-                            << "on line"
-                            << curr_->location.line
-                            << "\n";
+                        if (next_->type == TokenType_LPAREN)
+                        {
+                            FunctionCall *child = new FunctionCall();
+                            child->value = type_->value;
+
+                            next(); // skip lparen
+
+                            child->children.push_back(parse_function_call_args());
+
+                            if (!expect(TokenType_RPAREN))
+                            {
+                            }
+                            else
+                            {
+
+
+                                
+                                if (!expect(TokenType_SEMICOLON))
+                                {
+                                }
+                                else
+                                {
+                                    root->children.push_back(child);
+                                }
+                            }
+                        }
+                        else if (next_->type == TokenType_DOLLAR)
+                        {
+
+                            next();
+
+                            root->children.push_back(parse_var_decl(curr_));
+                        }
+                        else
+                        {
+                            std::cout
+                                << "Unexpected symbol"
+                                << " "
+                                << "on line "
+                                << curr_->location.line
+                                << "\n";
+                        }
                     }
                 }
             }
@@ -249,10 +275,9 @@ namespace typhp
     void Parser::skip_spaces()
     {
         Token *tok = nullptr;
-        while (1)
+        while ((tok = next()))
         {
-            tok = next();
-            if (tok == nullptr || is_space(tok))
+            if (tok == nullptr || is_space(tok) || *tok->value == '\n' || *tok->value == '\t')
             {
                 break;
             }
@@ -277,6 +302,13 @@ namespace typhp
         }
 
         return false;
+    }
+
+    ASTNode *Parser::parse_function_call_args()
+    {
+        ASTNode *ast = new ASTNode();
+
+        return ast;
     }
 
     ASTNode *Parser::parse_expr()
@@ -381,14 +413,14 @@ namespace typhp
     {
         Token *curr_ = curr();
 
-        ASTNode *ast = new IncludeStmt();
+        ASTNode *ast = nullptr;
         switch (curr_->type)
         {
-        // case TokenType_INCLUDE:
-        // {
-        //     ast = new IncludeStmt();
-        // }
-        // break;
+        case TokenType_INCLUDE:
+        {
+            ast = new IncludeStmt();
+        }
+        break;
         case TokenType_INCLUDE_ONCE:
         {
             ast = new IncludeOnceStmt();
@@ -406,7 +438,17 @@ namespace typhp
         break;
         }
 
-        ast->children.push_back(parse_expr());
+        Token *next_ = look_ahead(1);
+        if (next_ == nullptr || !is_space(next_))
+        {
+            // TODO: print error
+        }
+        else
+        {
+            next();
+
+            ast->children.push_back(parse_expr());
+        }
 
         return ast;
     }

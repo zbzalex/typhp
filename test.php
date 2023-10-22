@@ -12,7 +12,7 @@ mixed $a;
 /**
  * This is entry point function
  */
-function main()
+function main() : void
 {
     echo "hello\n";
 }

@@ -41,6 +41,8 @@ namespace typhp
         ASTNode *parse_expr();
 
         bool is_space(Token *tok);
+
+        ASTNode *parse_function_call_args();
     };
 
 } // namespace typhp
